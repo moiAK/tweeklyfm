@@ -1,22 +1,31 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Models;
 
 use Illuminate\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Auth\Passwords\CanResetPassword;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
+use Illuminate\Database\Eloquent\Model;
 use Laravel\Cashier\Billable;
 use Laravel\Cashier\Contracts\Billable as BillableContract;
 use Phoenix\EloquentMeta\MetaTrait;
 
 /**
- * Class User
- *
- * @package App\Models
+ * Class User.
  */
 class User extends Model implements AuthenticatableContract, CanResetPasswordContract, BillableContract
 {
-
     use Authenticatable, CanResetPassword, Billable, MetaTrait;
 
     /**
@@ -31,7 +40,7 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
      *
      * @var array
      */
-    protected $fillable = ['name', 'email', 'password', 'username', 'timezone' ];
+    protected $fillable = ['name', 'email', 'password', 'username', 'timezone'];
 
     /**
      * The attributes excluded from the model's JSON form.
@@ -47,11 +56,12 @@ class User extends Model implements AuthenticatableContract, CanResetPasswordCon
 
     /**
      * @param $username
+     *
      * @return mixed
      */
     public static function findByUsername($username)
     {
-        return static::where("username", "=", $username)->where("status", "=", "active")->firstOrFail();
+        return static::where('username', '=', $username)->where('status', '=', 'active')->firstOrFail();
     }
 
     /**

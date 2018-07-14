@@ -1,4 +1,16 @@
-<?php namespace App\Http\Middleware;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;
@@ -6,7 +18,6 @@ use Illuminate\Http\RedirectResponse;
 
 class RedirectIfAuthenticated
 {
-
     /**
      * The Guard implementation.
      *
@@ -17,7 +28,8 @@ class RedirectIfAuthenticated
     /**
      * Create a new filter instance.
      *
-     * @param  Guard  $auth
+     * @param Guard $auth
+     *
      * @return void
      */
     public function __construct(Guard $auth)
@@ -28,8 +40,9 @@ class RedirectIfAuthenticated
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)

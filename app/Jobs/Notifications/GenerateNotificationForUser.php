@@ -1,17 +1,27 @@
-<?php namespace App\Jobs\Notifcations;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Jobs\Notifcations;
 
 use App\Jobs\Job;
 use App\Models\User;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Bus\SelfHandling;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Pusher;
 
 /**
- * Class GenerateNotificationForUser
- *
- * @package App\Jobs\Notifcations
+ * Class GenerateNotificationForUser.
  */
 class GenerateNotificationForUser extends Job implements SelfHandling, ShouldQueue
 {
@@ -44,9 +54,6 @@ class GenerateNotificationForUser extends Job implements SelfHandling, ShouldQue
         $this->type = $type;
     }
 
-    /**
-     *
-     */
     public function handle()
     {
         // Remove job if its fails more than once
@@ -61,15 +68,15 @@ class GenerateNotificationForUser extends Job implements SelfHandling, ShouldQue
         $response = $pusher->get('/channels/private-user-'.$this->user->id);
 
         // Depending on the outcome, send either a push notice or an email
-        if ($response["result"]["occupied"] == true) {
+        if ($response['result']['occupied'] == true) {
             // User is online somewhere, so we'll send a push notification
             $pusher->trigger('private-user-'.$this->user->id, 'notification', [
-                "type"      => $this->type,
-                'message'   => $this->message
+                'type'      => $this->type,
+                'message'   => $this->message,
             ]);
         } else {
             // User isn't online, so we'll email the notification instead
-            echo "Send email instead";
+            echo 'Send email instead';
         }
     }
 }

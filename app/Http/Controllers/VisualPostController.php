@@ -1,4 +1,16 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers;
 
 use App\Logic\Source\LastFM;
 use App\Models\User;
@@ -8,7 +20,6 @@ use Intervention\Image\Facades\Image;
 
 class VisualPostController extends BaseController
 {
-
     /**
      * Show the application welcome screen to the user.
      *
@@ -16,28 +27,27 @@ class VisualPostController extends BaseController
      */
     public function getVisualPost($username)
     {
-
-        $user = User::where(["username" => $username])->firstOrFail();
+        $user = User::where(['username' => $username])->firstOrFail();
 
         $image = Cache::remember('visualpost2.'.$username, 1, function () use ($user) {
             // A few variables that we'll need
-            $max_width      = 800;
-            $max_height     = 800;
-            $row            = 0;
+            $max_width = 800;
+            $max_height = 800;
+            $row = 0;
             $current_height = 0;
-            $current_width  = 0;
-            $image_width    = 200;
-            $image_height   = 200;
-            $current        = 0;
-            $fontPath       = base_path('resources/fonts/yanone.ttf');
+            $current_width = 0;
+            $image_width = 200;
+            $image_height = 200;
+            $current = 0;
+            $fontPath = base_path('resources/fonts/yanone.ttf');
 
             $img = Image::canvas($max_width, $max_height, '#ffffff');
 
             // Test to see that we have a source configured
             if ($user->sources()->count() == 0) {
-                $img->text("Please configure a Last.fm Source.", 250, 400, function ($font) use ($fontPath) {
+                $img->text('Please configure a Last.fm Source.', 250, 400, function ($font) use ($fontPath) {
                     $font->file($fontPath);
-                    $font->color(array(0, 0, 0, 1));
+                    $font->color([0, 0, 0, 1]);
                     $font->size(30);
                 });
             } else {
@@ -49,7 +59,7 @@ class VisualPostController extends BaseController
                 $data = $artists->getItems();
 
                 if (count($data) == 0) {
-                    return file_get_contents(public_path("image/visual-post-error.png"));
+                    return file_get_contents(public_path('image/visual-post-error.png'));
                 } else {
                     // Split into the number of results we want
                     $data = array_slice($data, 0, 16);
@@ -66,7 +76,7 @@ class VisualPostController extends BaseController
                         // Try to load a remote image
                         try {
                             // We've loaded the remote image
-                            $img2 = Image::make($element["image"]);
+                            $img2 = Image::make($element['image']);
                         } catch (\Intervention\Image\Exception\NotReadableException $e) {
                             // Remote image load failed, so build a square
                             $img2 = Image::canvas(200, 200, '#ffffff');
@@ -80,9 +90,9 @@ class VisualPostController extends BaseController
                         $img2->rectangle(0, 0, 200, 25, function ($draw) {
                             $draw->background('#000000');
                         });
-                        $img2->text("#" . $current, 6, 20, function ($font) use ($fontPath) {
+                        $img2->text('#'.$current, 6, 20, function ($font) use ($fontPath) {
                             $font->file($fontPath);
-                            $font->color(array(255, 255, 255, 1));
+                            $font->color([255, 255, 255, 1]);
                             $font->size(18);
                         });
 
@@ -94,19 +104,19 @@ class VisualPostController extends BaseController
                     }
                 }
 
-                $watermark = Image::make(public_path("image/logo.png"));
+                $watermark = Image::make(public_path('image/logo.png'));
 
                 $watermark->fit(60, 60, function ($constraint) {
                     $constraint->upsize();
                 });
 
                 // Add tweekly.fm watermark
-                $img->insert($watermark, "bottom-right", 10, 10);
+                $img->insert($watermark, 'bottom-right', 10, 10);
 
                 return $img->response('png');
             }
 
-            return file_get_contents(public_path("image/visual-post-error.png"));
+            return file_get_contents(public_path('image/visual-post-error.png'));
         });
 
         return Response::make($image, 200, ['Content-Type' => 'image/jpeg']);

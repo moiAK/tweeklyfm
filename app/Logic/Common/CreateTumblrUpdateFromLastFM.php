@@ -1,11 +1,21 @@
-<?php namespace App\Logic\Common;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Logic\Common;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class CreateTumblrUpdateFromLastFM
 {
-
     protected $status;
     protected $artists;
 
@@ -20,11 +30,11 @@ class CreateTumblrUpdateFromLastFM
         }
 
         if (!isset($this->user->id)) {
-            throw new \Exception("No user provided.");
+            throw new \Exception('No user provided.');
         }
 
         if (count($this->artists) === 0) {
-            throw new \Exception("No data to build an update with.");
+            throw new \Exception('No data to build an update with.');
         }
 
         return $this->build();
@@ -33,7 +43,7 @@ class CreateTumblrUpdateFromLastFM
     public function build()
     {
         if ($this->user->isPremium()) {
-            $artists_to_display = $this->user->getMeta("publish.max", 5);
+            $artists_to_display = $this->user->getMeta('publish.max', 5);
         } else {
             $artists_to_display = 3;
         }
@@ -49,20 +59,20 @@ class CreateTumblrUpdateFromLastFM
         if ($total == 1) {
             $text = 'My Top <a href="http://last.fm" target="_blank">Last.fm</a> artist: ';
         } else {
-            $text = 'My Top ' . $total . ' <a href="http://last.fm" target="_blank">Last.fm</a> artists: ';
+            $text = 'My Top '.$total.' <a href="http://last.fm" target="_blank">Last.fm</a> artists: ';
         }
 
         // Iterate our loop
         foreach ($this->artists as $artist) {
-            $text .= $artist["title"]." (".$artist["count"].")";
+            $text .= $artist['title'].' ('.$artist['count'].')';
 
             // Work out what punctuation to use.
-            if ($x < $total-2) {
+            if ($x < $total - 2) {
                 // If before the last two artists
-                $text .= ", ";
-            } elseif ($x+2 == $total) {
+                $text .= ', ';
+            } elseif ($x + 2 == $total) {
                 // Is the second to last artist
-                $text .= " & ";
+                $text .= ' & ';
             }
 
             $x++;
@@ -70,11 +80,11 @@ class CreateTumblrUpdateFromLastFM
 
         // If this is a premium, append their hashtag
         if ($this->user->isPremium()) {
-            $text .= " #".$this->user->getMeta("publish.hashtag", "music");
+            $text .= ' #'.$this->user->getMeta('publish.hashtag', 'music');
         }
 
         // Add signature icon
-        $this->status = "♫ ".$text."<br><br><small><a href=\"https://tweekly.fm\">Powered by Tweekly.fm</a></small>";
+        $this->status = '♫ '.$text.'<br><br><small><a href="https://tweekly.fm">Powered by Tweekly.fm</a></small>';
 
         // Return our text
         return $this->status;

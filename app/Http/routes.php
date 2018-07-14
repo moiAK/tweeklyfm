@@ -1,4 +1,15 @@
 <?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
 use App\Models\User;
 
 Route::get('/visual/{username}.jpg', 'VisualPostController@getVisualPost');
@@ -29,20 +40,19 @@ Route::controllers([
     'password'          => 'Auth\PasswordController',
     'settings'          => 'SettingsController',
     'source'            => 'SourceController',
-    'connection'        => 'ConnectController'
+    'connection'        => 'ConnectController',
 ]);
-
 
 // Handle any subdomain views, this is the end user profile view
 Route::group(['domain' => '{account}.tweekly.app'], function () {
     Route::get('/', function ($account) {
         // Check that this prefix isn't a www or the likes
-        if ($account === "www") {
+        if ($account === 'www') {
             // Return the homepage
             return view('pages.welcome');
         } else {
             // Lookup this users account
-            return view('pages.profile', ['user' => User::findByUsername($account) ]);
+            return view('pages.profile', ['user' => User::findByUsername($account)]);
         }
     });
 });
@@ -73,8 +83,6 @@ Route::get('/scheduled/create', 'ScheduledController@getScheduledCreate');
 Route::post('/scheduled/create', 'ScheduledController@postScheduledCreate');
 Route::get('/scheduled/{id}/delete', 'ScheduledController@getScheduledDelete');
 
-
-
 Route::get('/publish/start', 'PublishController@getPublishStart');
 Route::post('/publish/start', 'PublishController@postPublishStart');
 Route::get('/publish/success', 'PublishController@getPublishSuccess');
@@ -91,24 +99,21 @@ Route::get('/patrons', 'PageController@getPatrons');
 Route::get('/', 'PageController@getWelcome');
 
 Route::group(['prefix' => '/profile/', 'namespace' => 'Profile', 'middleware' => 'auth'], function () {
-
     Route::get('/', [
         'as'    => 'profile.edit',
-        'uses'  => 'ProfileController@editProfile'
+        'uses'  => 'ProfileController@editProfile',
     ]);
 
     Route::post('/', [
         'as'    => 'profile.update',
-        'uses'  => 'ProfileController@updateProfile'
+        'uses'  => 'ProfileController@updateProfile',
     ]);
 
     Route::post('/remove', [
         'as'    => 'profile.remove',
-        'uses'  => 'ProfileController@removeProfile'
+        'uses'  => 'ProfileController@removeProfile',
     ]);
 });
-
-
 
 //Route::get("/test", function() {
 //

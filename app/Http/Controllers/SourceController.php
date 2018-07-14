@@ -1,16 +1,27 @@
-<?php namespace App\Http\Controllers;
+<?php
 
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers;
+
+use App\Models\Notification;
 use App\Models\Scheduled;
+use App\Models\ScheduledPost;
+use App\Models\Source;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\Source;
-use App\Models\Notification;
 use Laracasts\Flash\Flash;
-use App\Models\ScheduledPost;
 
 class SourceController extends BaseController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -22,8 +33,8 @@ class SourceController extends BaseController
         $user = Auth::user();
 
         $source = Source::where([
-            "id"                => $id,
-            "user_id"           => $user->id
+            'id'                => $id,
+            'user_id'           => $user->id,
         ])->first();
 
         if (isset($source->id)) {
@@ -32,7 +43,7 @@ class SourceController extends BaseController
             $username = $source->external_name;
 
             // Remove any scheduled posts with this source
-            ScheduledPost::where("source_id", "=", $id)->delete();
+            ScheduledPost::where('source_id', '=', $id)->delete();
 
             // Delete this source
             $source->delete();
@@ -45,13 +56,13 @@ class SourceController extends BaseController
             Flash::success($notification->message);
 
             // Redirect
-            return Redirect::to("/settings/sources");
+            return Redirect::to('/settings/sources');
         } else {
             // Inform the user
-            Flash::error("Unable to delete the provided source");
+            Flash::error('Unable to delete the provided source');
 
             // Redirect
-            return Redirect::to("/settings/sources");
+            return Redirect::to('/settings/sources');
         }
     }
 }

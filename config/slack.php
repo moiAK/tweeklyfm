@@ -1,5 +1,15 @@
 <?php
 
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
 return [
 
     /*
@@ -13,7 +23,7 @@ return [
     |
     */
 
-    'endpoint' => env("SLACK_API_WEBHOOK"),
+    'endpoint' => env('SLACK_API_WEBHOOK'),
 
     /*
     |-------------------------------------------------------------
@@ -26,7 +36,7 @@ return [
     |
     */
 
-    'channel' => env("SLACK_API_CHANNEL"),
+    'channel' => env('SLACK_API_CHANNEL'),
 
     /*
     |-------------------------------------------------------------
@@ -38,7 +48,7 @@ return [
     |
     */
 
-    'username' => env("SLACK_API_USERNAME"),
+    'username' => env('SLACK_API_USERNAME'),
 
     /*
     |-------------------------------------------------------------

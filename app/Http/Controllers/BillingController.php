@@ -1,19 +1,29 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers;
 
 use App\Logic\Common\ErrorLog;
+use Exception;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
-use Exception;
 use Laracasts\Flash\Flash;
 
 /**
- * Class SettingsController
- * @package App\Http\Controllers
+ * Class SettingsController.
  */
 class BillingController extends BaseController
 {
-
     /**
      * Create a new controller instance.
      *
@@ -38,41 +48,41 @@ class BillingController extends BaseController
         $x = Input::all();
 
         try {
-            $subscription = $this->user->subscription($x["subscription_type"]);
+            $subscription = $this->user->subscription($x['subscription_type']);
 
-            if ($x["coupon"] != "") {
-                $subscription->withCoupon($x["coupon"]);
+            if ($x['coupon'] != '') {
+                $subscription->withCoupon($x['coupon']);
             }
 
-            $subscription->create($x["stripeToken"], [
-                'email' => $this->user->email
+            $subscription->create($x['stripeToken'], [
+                'email' => $this->user->email,
             ]);
 
-            $this->data["premium"] = true;
+            $this->data['premium'] = true;
 
             $user = $this->user;
 
             // Update the users subscription information
             $user->subscription_provided_by = 'stripe';
-            $user->subscription_plan = $x["subscription_type"];
+            $user->subscription_plan = $x['subscription_type'];
             $user->subscription_active = true;
             $user->save();
 
             Mail::send('emails.premium.welcome', [
-                'user'   => $user
+                'user'   => $user,
             ], function ($message) use ($user) {
                 $message->to($user->email, $user->name)->subject('Thank You!');
             });
 
-            Flash::success("You have successfully added your subscription, thank you!");
+            Flash::success('You have successfully added your subscription, thank you!');
 
-            return Redirect::to("/billing");
+            return Redirect::to('/billing');
         } catch (Exception $e) {
             ErrorLog::log($e);
 
-            Flash::error("There was an error processing your subscription. Please try again. If you used a coupon it may have expired or been used a maximum amount of times.");
+            Flash::error('There was an error processing your subscription. Please try again. If you used a coupon it may have expired or been used a maximum amount of times.');
 
-            return Redirect::to("/billing");
+            return Redirect::to('/billing');
         }
     }
 
@@ -81,22 +91,22 @@ class BillingController extends BaseController
         $x = Input::all();
 
         try {
-            $subscription = $this->user->subscription($x["subscription_type"]);
-            $subscription->resume($x["stripeToken"], [
-                'email' => $this->user->email
+            $subscription = $this->user->subscription($x['subscription_type']);
+            $subscription->resume($x['stripeToken'], [
+                'email' => $this->user->email,
             ]);
 
-            $this->data["premium"] = true;
+            $this->data['premium'] = true;
 
-            Flash::success("Successfully resumed your subscription");
+            Flash::success('Successfully resumed your subscription');
 
-            return Redirect::to("/billing");
+            return Redirect::to('/billing');
         } catch (Exception $e) {
-            Flash::error("There was an error processing your subscription. Please try again");
+            Flash::error('There was an error processing your subscription. Please try again');
 
             ErrorLog::log($e);
 
-            return Redirect::to("/billing");
+            return Redirect::to('/billing');
         }
     }
 
@@ -104,27 +114,28 @@ class BillingController extends BaseController
     {
         try {
             $this->user->subscription()->cancel();
-            return Redirect::to("/billing");
+
+            return Redirect::to('/billing');
         } catch (Exception $e) {
             ErrorLog::log($e);
 
-            Flash::error("There was an error processing your subscription. Please try again");
+            Flash::error('There was an error processing your subscription. Please try again');
 
-            return Redirect::to("/billing");
+            return Redirect::to('/billing');
         }
     }
 
     public function getBillingOverview()
     {
-        $this->data["user"] = $this->user;
-        if ($this->user->subscription_provided_by == "legacy") {
+        $this->data['user'] = $this->user;
+        if ($this->user->subscription_provided_by == 'legacy') {
             return view('billing.legacy.subscribed', $this->data);
-        } elseif ($this->user->subscription_provided_by == "paypal") {
+        } elseif ($this->user->subscription_provided_by == 'paypal') {
             return view('billing.paypal.subscribed', $this->data);
         } else {
             if ($this->user->subscribed()) {
-                $this->data["invoices"] = [];
-                $this->data["expiry_date"] = $this->user["subscription_ends_at"];
+                $this->data['invoices'] = [];
+                $this->data['expiry_date'] = $this->user['subscription_ends_at'];
 
                 return view('billing.stripe.subscribed', $this->data);
             } else {

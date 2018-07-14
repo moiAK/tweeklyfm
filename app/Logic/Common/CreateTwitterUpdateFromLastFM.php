@@ -1,11 +1,21 @@
-<?php namespace App\Logic\Common;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Logic\Common;
 
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 
 class CreateTwitterUpdateFromLastFM
 {
-
     protected $status;
     protected $artists;
 
@@ -20,11 +30,11 @@ class CreateTwitterUpdateFromLastFM
         }
 
         if (!isset($this->user->id)) {
-            throw new \Exception("No user provided");
+            throw new \Exception('No user provided');
         }
 
         if (count($this->artists) === 0) {
-            throw new \Exception("No data to build an update with.");
+            throw new \Exception('No data to build an update with.');
         }
 
         return $this->build();
@@ -43,22 +53,22 @@ class CreateTwitterUpdateFromLastFM
 
         // Our initial text
         if ($total == 1) {
-            $text = "My Top #lastfm artist: ";
+            $text = 'My Top #lastfm artist: ';
         } else {
-            $text = "My Top " . $total . " #lastfm artists: ";
+            $text = 'My Top '.$total.' #lastfm artists: ';
         }
 
         // Iterate our loop
         foreach ($this->artists as $artist) {
-            $text .= $artist["title"] . " (" . $artist["count"] . ")";
+            $text .= $artist['title'].' ('.$artist['count'].')';
 
             // Work out what punctuation to use.
             if ($x < $total - 2) {
                 // If before the last two artists
-                $text .= ", ";
+                $text .= ', ';
             } elseif ($x + 2 == $total) {
                 // Is the second to last artist
-                $text .= " & ";
+                $text .= ' & ';
             }
 
             $x++;
@@ -66,35 +76,35 @@ class CreateTwitterUpdateFromLastFM
 
         // Fix tweets not going out
         if (strlen($text) > 255) {
-            $text = str_replace("Weekly", "Wkly", $text);
-            $text = str_replace("artists ", "", $text);
-            $text = str_replace("My Top " . $total, "", $text);
+            $text = str_replace('Weekly', 'Wkly', $text);
+            $text = str_replace('artists ', '', $text);
+            $text = str_replace('My Top '.$total, '', $text);
             // $text = str_replace($hashtag,"",$text);
         }
 
         // If its still above 130 then truncate
         if (strlen($text) > 245) {
-            $text = substr($text, 0, 240) . "..";
+            $text = substr($text, 0, 240).'..';
         }
 
-        $text .= " via @tweeklyfm";
+        $text .= ' via @tweeklyfm';
 
         // Add signature icon
-        $text = "♫ ".$text;
+        $text = '♫ '.$text;
 
         // Set a default hash
-        $hashtag = "";
+        $hashtag = '';
 
         // If this is a premium, append their hashtag
         if ($this->user->isPremium()) {
-            $hashtag = " #" . $this->user->getMeta("publish.hashtag", "music");
+            $hashtag = ' #'.$this->user->getMeta('publish.hashtag', 'music');
         }
 
         // Add the hashtag
         $text .= $hashtag;
 
         if (strlen($text) > 280) {
-            $text = str_replace($hashtag, "", $text);
+            $text = str_replace($hashtag, '', $text);
         }
 
         // Now set the status text

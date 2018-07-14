@@ -1,4 +1,16 @@
-<?php namespace App\Http\Controllers\Connection;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers\Connection;
 
 use App\Http\Controllers\BaseController;
 use App\Logic\Common\ErrorLog;
@@ -14,7 +26,6 @@ use Laravel\Socialite\Facades\Socialite as Socialize;
 
 class Twitter extends BaseController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -27,7 +38,6 @@ class Twitter extends BaseController
         return Socialize::with('twitter')->redirect();
     }
 
-
     public function getCallback(Request $request)
     {
         // Get all the input vars
@@ -37,24 +47,25 @@ class Twitter extends BaseController
         $user = Auth::user();
 
         // check for error=access_denied
-        if (isset($input["denied"])) {
-            Flash::error("The request for a token from Twitter was denied.");
-            return Redirect::to("/settings/connections");
+        if (isset($input['denied'])) {
+            Flash::error('The request for a token from Twitter was denied.');
+
+            return Redirect::to('/settings/connections');
         }
 
         try {
             $twitter = Socialize::with('twitter')->user();
 
             $connection = Connection::firstOrNew([
-                "user_id" => $user->id,
-                "network_id" => 1,
-                "network_name" => "twitter",
-                "external_user_id" => $twitter->getId()
+                'user_id'          => $user->id,
+                'network_id'       => 1,
+                'network_name'     => 'twitter',
+                'external_user_id' => $twitter->getId(),
             ]);
 
             $connection->user_id = $user->id;
             $connection->network_id = 1;
-            $connection->network_name = "twitter";
+            $connection->network_name = 'twitter';
             $connection->oauth_token = $twitter->token;
             $connection->oauth_token_secret = $twitter->tokenSecret;
             $connection->external_name = $twitter->getName();
@@ -63,31 +74,31 @@ class Twitter extends BaseController
             $connection->external_avatar = $twitter->getAvatar();
             $connection->checked_at = Carbon::now();
             $connection->expires_at = null;
-            $connection->message = "Successfully connected";
+            $connection->message = 'Successfully connected';
             $connection->save();
 
             $notification = new Notification();
             $notification->user_id = $user->id;
-            $notification->message = "Added Twitter Connection: @" . $twitter->getNickname();
+            $notification->message = 'Added Twitter Connection: @'.$twitter->getNickname();
             $notification->save();
 
             Mail::send('emails.connection-added', [
                 'network' => 'Twitter',
-                'avatar' => $twitter->getAvatar(),
-                'name' => $twitter->getName()
+                'avatar'  => $twitter->getAvatar(),
+                'name'    => $twitter->getName(),
             ], function ($message) use ($user, $twitter) {
-                $message->to($user->email, $user->name)->subject('Twitter Connection Added: @' . $twitter->getNickname());
+                $message->to($user->email, $user->name)->subject('Twitter Connection Added: @'.$twitter->getNickname());
             });
 
-            Flash::success("You have successfully added a Twitter connection for ".$twitter->getNickname());
+            Flash::success('You have successfully added a Twitter connection for '.$twitter->getNickname());
 
-            return Redirect::to("/settings/connections");
+            return Redirect::to('/settings/connections');
         } catch (\Exception $e) {
             ErrorLog::log($e);
 
-            Flash::error("The request for a token from Twitter failed, or you have blocked the app.");
+            Flash::error('The request for a token from Twitter failed, or you have blocked the app.');
 
-            return Redirect::to("/settings/connections");
+            return Redirect::to('/settings/connections');
         }
     }
 }

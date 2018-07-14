@@ -1,10 +1,21 @@
-<?php namespace App\Http\Controllers;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
 
 class PageController extends BaseController
 {
-
     /*
     |--------------------------------------------------------------------------
     | Welcome Controller
@@ -55,7 +66,6 @@ class PageController extends BaseController
 
     public function getStats()
     {
-
         $rows = DB::select("SELECT COUNT(published_at) as published_total, DATE_FORMAT(published_at, '%Y/%m/%d') 
                                 as date_formatted FROM updates  
                                 GROUP BY YEAR(published_at), MONTH(published_at), DAY(published_at) ");

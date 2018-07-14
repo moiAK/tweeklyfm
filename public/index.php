@@ -1,9 +1,13 @@
 <?php
-/**
- * Laravel - A PHP Framework For Web Artisans
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
  *
- * @package  Laravel
- * @author   Taylor Otwell <taylorotwell@gmail.com>
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
  */
 
 /*
@@ -49,7 +53,7 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 $kernel = $app->make('Illuminate\Contracts\Http\Kernel');
 
 $response = $kernel->handle(
-	$request = Illuminate\Http\Request::capture()
+    $request = Illuminate\Http\Request::capture()
 );
 
 $response->send();

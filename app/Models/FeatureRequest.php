@@ -1,10 +1,21 @@
-<?php namespace App\Models;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
 class FeatureRequest extends Model
 {
-
     /**
      * The database table used by the model.
      *
@@ -28,7 +39,7 @@ class FeatureRequest extends Model
 
     public static function findByUserId($id)
     {
-        return static::where("user_id", "=", $id)->firstOrFail();
+        return static::where('user_id', '=', $id)->firstOrFail();
     }
 
     public function user()
@@ -36,15 +47,13 @@ class FeatureRequest extends Model
         return $this->belongsTo('App\Models\User', 'user_id', 'id');
     }
 
-
     public function category()
     {
-        return $this->hasOne("\App\Models\FeatureRequestCategory", "id", "feature_request_id");
+        return $this->hasOne("\App\Models\FeatureRequestCategory", 'id', 'feature_request_id');
     }
-
 
     public function byCategory($category_id)
     {
-        return $this->where("feature_category_id", "=", $category_id);
+        return $this->where('feature_category_id', '=', $category_id);
     }
 }

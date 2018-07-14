@@ -1,15 +1,25 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Console\Commands;
 
 use App\Logic\Source\LastFM_Loved;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Bus\DispatchesJobs;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class PostNewlyLovedTracksCommand extends Command
 {
-
     use DispatchesJobs;
 
     /**
@@ -48,10 +58,10 @@ class PostNewlyLovedTracksCommand extends Command
         foreach ($query as $result) {
             $user = User::find($result->metable_id);
 
-            $this->info("Process: ".$user->name);
+            $this->info('Process: '.$user->name);
 
-            $connections    = $user->connections();
-            $sources        = $user->sources()->where("network_name", "lastfm");
+            $connections = $user->connections();
+            $sources = $user->sources()->where('network_name', 'lastfm');
 
             if ($sources->exists()) {
                 foreach ($sources->get() as $source) {
@@ -66,15 +76,15 @@ class PostNewlyLovedTracksCommand extends Command
                         foreach ($tracks as $track) {
                             // ...publish to each of their networks
                             foreach ($connections->get() as $connection) {
-                                if ($connection->network_name == "twitter") {
+                                if ($connection->network_name == 'twitter') {
                                     // Build an update from the artists given back
-                                    $update = "#lastfm ❤️: " . $track["name_artist"] . " - " .
-                                        $track["name_track"] . ": " . $track["url"];
+                                    $update = '#lastfm ❤️: '.$track['name_artist'].' - '.
+                                        $track['name_track'].': '.$track['url'];
 
                                     $job = (new \App\Jobs\Connection\PublishToTwitter(
                                         $user,
                                         $connection,
-                                        (string)$update
+                                        (string) $update
                                     ))->onQueue('publish.twitter');
                                     $this->dispatch($job);
                                 }
