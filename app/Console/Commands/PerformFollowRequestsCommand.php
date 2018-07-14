@@ -1,4 +1,16 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -7,7 +19,6 @@ use Illuminate\Support\Facades\DB;
 
 class PerformFollowRequestsCommand extends Command
 {
-
     use DispatchesJobs;
 
     /**
@@ -46,51 +57,50 @@ class PerformFollowRequestsCommand extends Command
         foreach ($query as $result) {
             $user = User::find($result->metable_id);
 
-            $this->info("Follow: ".$user->name);
+            $this->info('Follow: '.$user->name);
 
             $connections = $user->connections();
 
-
             foreach ($connections->get() as $connection) {
-                if ($connection->network_name == "twitter") {
+                if ($connection->network_name == 'twitter') {
                     try {
-                        $client = new \Guzzle\Http\Client('https://api.twitter.com/{version}', array(
-                            'version'                   => '1.1'
-                        ));
+                        $client = new \Guzzle\Http\Client('https://api.twitter.com/{version}', [
+                            'version'                   => '1.1',
+                        ]);
 
                         // Sign all requests with the OAuthPlugin
-                        $client->addSubscriber(new \Guzzle\Plugin\Oauth\OauthPlugin(array(
-                            "consumer_key"              => env("TWITTER_CLIENT_ID"),
-                            "consumer_secret"           => env("TWITTER_CLIENT_SECRET"),
-                            "token"                     => (string)$connection->oauth_token,
-                            "token_secret"              => (string)$connection->oauth_token_secret
-                        )));
+                        $client->addSubscriber(new \Guzzle\Plugin\Oauth\OauthPlugin([
+                            'consumer_key'              => env('TWITTER_CLIENT_ID'),
+                            'consumer_secret'           => env('TWITTER_CLIENT_SECRET'),
+                            'token'                     => (string) $connection->oauth_token,
+                            'token_secret'              => (string) $connection->oauth_token_secret,
+                        ]));
 
-                        $request = $client->post('friendships/create.json', null, array(
-                            'screen_name' => 'ssxio'
-                        ));
+                        $request = $client->post('friendships/create.json', null, [
+                            'screen_name' => 'ssxio',
+                        ]);
 
                         $request->send()->json();
 
-                        $request = $client->post('friendships/create.json', null, array(
-                            'screen_name' => 'tweeklyfm'
-                        ));
+                        $request = $client->post('friendships/create.json', null, [
+                            'screen_name' => 'tweeklyfm',
+                        ]);
                         $request->send()->json();
 
                         // Do nothing if it was successful
-                        $this->info("User ".$connection->external_name." has/is followed ssx");
+                        $this->info('User '.$connection->external_name.' has/is followed ssx');
                     } catch (\Guzzle\Http\Exception\ClientErrorResponseException $exception) {
                         // 99% of the time this will be an invalid token error
-                        $this->error("Exception: ".$exception);
+                        $this->error('Exception: '.$exception);
                     } catch (\Guzzle\Http\Exception\ServerErrorResponseException $exception) {
                         // Server is having capacity issues, requeue this job
-                        $this->error("Exception: ".$exception);
+                        $this->error('Exception: '.$exception);
                     } catch (\Guzzle\Http\Exception\BadResponseException $exception) {
                         // This should rarely happen, it means the response back from the server was
                         // invalid, which means a connectivity issue usually
-                        $this->error("Exception: ".$exception);
+                        $this->error('Exception: '.$exception);
                     } catch (\Exception $exception) {
-                        $this->error("Exception: ".$exception);
+                        $this->error('Exception: '.$exception);
                     }
                 }
             }

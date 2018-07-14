@@ -1,24 +1,33 @@
-<?php namespace App\Http\Controllers\Billing;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers\Billing;
 
 use App\Http\Controllers\BaseController;
+use App\Logic\Payment\Paypal\IpnListener;
 use App\Models\TransactionPaypal;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
-use Exception;
-use Laracasts\Flash\Flash;
-use App\Logic\Payment\Paypal\IpnListener;
 
 /**
- * Class SettingsController
- * @package App\Http\Controllers
+ * Class SettingsController.
  */
 class PaypalBillingProviderController extends BaseController
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -58,7 +67,6 @@ class PaypalBillingProviderController extends BaseController
         //        return Redirect::to('settings')->with('cancelled', true);
     }
 
-
     public function postHandleWebhook()
     {
         $listener = new IpnListener();
@@ -74,58 +82,58 @@ class PaypalBillingProviderController extends BaseController
                     $user = User::find($user_id);
 
                     if (!isset($data['txn_id'])) {
-                        $data['txn_id'] = "None";
+                        $data['txn_id'] = 'None';
                     }
 
                     // Log the transaction in the database
-                    $transaction = new TransactionPaypal;
+                    $transaction = new TransactionPaypal();
                     $transaction->transaction_id = $data['txn_id'];
                     $transaction->user_id = $user_id;
                     $transaction->data = json_encode($data);
                     $transaction->save();
 
                     // Subscription signup
-                    if ($data["txn_type"] == "subscr_signup") {
+                    if ($data['txn_type'] == 'subscr_signup') {
                     }
 
-                    if ($data["txn_type"] == "subscr_failed") {
+                    if ($data['txn_type'] == 'subscr_failed') {
                         // Recurring payment failed, mail user?
                         $user->subscription_active = false;
                         $user->save();
                     }
 
-                    if ($data["txn_type"] == "subscr_cancel") {
+                    if ($data['txn_type'] == 'subscr_cancel') {
                         // Recurring payment failed, mail user?
                         $user->subscription_active = false;
-                        $user->subscription_plan = "";
-                        $user->subscription_provided_by = "";
+                        $user->subscription_plan = '';
+                        $user->subscription_provided_by = '';
                         $user->subscription_ends_at = Carbon::now();
                         $user->save();
                     }
 
                     // Subscription payment
-                    if ($data["txn_type"] == "subscr_payment") {
-                        if ($data["payment_gross"] == "16.00") {
-                            $plan = "premium";
+                    if ($data['txn_type'] == 'subscr_payment') {
+                        if ($data['payment_gross'] == '16.00') {
+                            $plan = 'premium';
                             $expiry = Carbon::now()->addYears(1);
-                        } elseif ($data["payment_gross"] == "15.00") {
-                            $plan = "premium";
+                        } elseif ($data['payment_gross'] == '15.00') {
+                            $plan = 'premium';
                             $expiry = Carbon::now()->addYears(1);
-                        } elseif ($data["payment_gross"] == "1.69") {
-                            $plan = "premium-multiple-monthly";
+                        } elseif ($data['payment_gross'] == '1.69') {
+                            $plan = 'premium-multiple-monthly';
                             $expiry = Carbon::now()->addMonths(1);
-                        } elseif ($data["payment_gross"] == "10.00") {
-                            $plan = "premium-single-year";
+                        } elseif ($data['payment_gross'] == '10.00') {
+                            $plan = 'premium-single-year';
                             $expiry = Carbon::now()->addYears(1);
-                        } elseif ($data["payment_gross"] == "1.00") {
-                            $plan = "premium-single-monthly";
+                        } elseif ($data['payment_gross'] == '1.00') {
+                            $plan = 'premium-single-monthly';
                             $expiry = Carbon::now()->addMonths(1);
                         } else {
                             abort(500);
                         }
 
                         // Perform an active depending on how the transaction went
-                        if ($data["payment_status"] == "Completed") {
+                        if ($data['payment_status'] == 'Completed') {
                             $old_premium = $user->subscription_active;
 
                             $user->subscription_provided_by = 'paypal';
@@ -137,7 +145,7 @@ class PaypalBillingProviderController extends BaseController
                             // Send premium email, this is the first time they've paid
                             if ($old_premium == false) {
                                 Mail::send('emails.premium.welcome', [
-                                    'user' => $user
+                                    'user' => $user,
                                 ], function ($message) use ($user) {
                                     $message->to($user->email, $user->name)->subject('Thank You!');
                                 });

@@ -1,4 +1,16 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -6,7 +18,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class TestCommand extends Command
 {
-
     use DispatchesJobs;
 
     /**
@@ -41,9 +52,9 @@ class TestCommand extends Command
     public function fire()
     {
         $user = User::find(1);
-        $connection = $user->connections()->where("network_name", "=", "twitter")->first();
+        $connection = $user->connections()->where('network_name', '=', 'twitter')->first();
 
-        $job = (new \App\Jobs\Connection\PublishToTwitter($user, $connection, "You people are animals."))
+        $job = (new \App\Jobs\Connection\PublishToTwitter($user, $connection, 'You people are animals.'))
                     ->onQueue('publish.twitter');
 
         $this->dispatch($job);

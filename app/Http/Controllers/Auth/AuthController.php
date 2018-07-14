@@ -1,19 +1,28 @@
-<?php namespace App\Http\Controllers\Auth;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
-use Illuminate\Contracts\Auth\Guard;
-use Illuminate\Contracts\Auth\Registrar;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
-
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -30,8 +39,9 @@ class AuthController extends Controller
     /**
      * Create a new authentication controller instance.
      *
-     * @param  \Illuminate\Contracts\Auth\Guard  $auth
-     * @param  \Illuminate\Contracts\Auth\Registrar  $registrar
+     * @param \Illuminate\Contracts\Auth\Guard     $auth
+     * @param \Illuminate\Contracts\Auth\Registrar $registrar
+     *
      * @return void
      */
     public function __construct()
@@ -47,17 +57,18 @@ class AuthController extends Controller
             'email'         => 'required|email|confirmed|max:255|unique:users',
             'password'      => 'required|confirmed|min:6',
         ], [
-            'name.min'      => 'The full name field must be a minimum of six characters',
-            'username.min'  => 'The username field must be a minimum of three characters',
+            'name.min'              => 'The full name field must be a minimum of six characters',
+            'username.min'          => 'The username field must be a minimum of three characters',
             'name.required'         => 'The full name field is required',
-            'username.required'  => 'The username field is required',
+            'username.required'     => 'The username field is required',
         ]);
     }
 
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param  array  $data
+     * @param array $data
+     *
      * @return User
      */
     public function create(array $data)
@@ -69,7 +80,6 @@ class AuthController extends Controller
             'password'  => bcrypt($data['password']),
         ]);
     }
-
 
     public function postLogin(Request $request)
     {
@@ -86,7 +96,7 @@ class AuthController extends Controller
             $user->save();
 
             // Force redirect home
-            return Redirect::to("/home");
+            return Redirect::to('/home');
         }
 
         return redirect($this->loginPath())

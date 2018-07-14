@@ -1,7 +1,17 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateNewsTable extends Migration
 {
@@ -12,8 +22,7 @@ class CreateNewsTable extends Migration
      */
     public function up()
     {
-        Schema::create('news', function(Blueprint $table)
-        {
+        Schema::create('news', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->integer('user_id')->unsigned();

@@ -1,4 +1,16 @@
-<?php namespace App\Console\Commands;
+<?php
+
+/*
+ * This file is part of tweeklyfm/tweeklyfm
+ *
+ *  (c) Scott Wilcox <scott@dor.ky>
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *  file that was distributed with this source code.
+ *
+ */
+
+namespace App\Console\Commands;
 
 use App\Models\User;
 use Illuminate\Console\Command;
@@ -6,7 +18,6 @@ use Illuminate\Foundation\Bus\DispatchesJobs;
 
 class GenerateVisualPostImagesCommand extends Command
 {
-
     use DispatchesJobs;
 
     /**
@@ -48,7 +59,7 @@ class GenerateVisualPostImagesCommand extends Command
             $total++;
         }
 
-        $this->info("Generated a total of ".$total." visual post images");
+        $this->info('Generated a total of '.$total.' visual post images');
     }
 
     /**
