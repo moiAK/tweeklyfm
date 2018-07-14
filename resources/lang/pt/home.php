@@ -1,0 +1,10 @@
+<?php
+
+return [
+
+    "welcome"               => "O Tweekly.fm usa as suas informações da Last.fm e magicamente pode postar esses dados
+                                nas suas mídias sociais, como Twitter, Facebook e Tumblr gratuitamente. Inscreva-se e
+                                postaremos automaticamente com a frequência que você preferir.",
+    "strapline"             => "Junte-se a meio milhão de pessoas ao redor do mundo e compartilhe sua música!",
+
+];

@@ -1,0 +1,90 @@
+.navbar-brand, p {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+}
+
+.navbar-container {
+    margin-top: 80px;
+}
+
+p {
+    line-height: 1.6em;
+    margin-bottom: 10px;
+}
+
+footer a {
+    text-decoration: none;
+    color: #000;
+}
+
+footer a:hover {
+    color: #000 !important;
+    text-decoration: none;
+}
+
+.tweekly-brand-background {
+    background: #CC3433;
+}
+
+.tweekly-brand-button {
+    background: #CC3433;
+    color: #fff;
+    margin: 10px 0px 10px 0px !important;
+}
+
+.tweekly-brand-button:hover {
+    color: #fff;
+    background: #000;
+}
+
+.padding20 {
+    padding: 20px;
+}
+
+.jumbotron img {
+    border-radius: 50%;
+    width: 100%;
+}
+
+.playPosition {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    padding: 5px;
+    color: #fff;
+    background: #CC3433;
+    text-align: center;
+    font: 32px Arial, sans-serif;
+}
+
+.round-image {
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    padding: 5px;
+    color: #fff;
+    background: #CC3433;
+    text-align: center;
+    font: 32px Arial, sans-serif;
+}
+
+.list-group-item i {
+    margin-right: 10px;
+}
+
+.left-menu a:link, .left-menu a:visited, .left-menu a:active {
+    text-decoration: none !important;
+}
+
+.left-menu a:hover {
+    text-decoration: none !important;
+    color: #CC3433;
+}
+
+#language-switcher .lang-lbl {
+    margin-left: 5px;
+}
+
+@media screen and (max-width: 1020px) {
+  #video-background { display: none; }
+}
