@@ -39,5 +39,7 @@ either sponsor via [Patreon](https://www.patreon.com/user?u=5066287). If you
  
  If you would like to take this codebase and use it in a commercial 
  fashion or to make profit then you will be required to make a reasonable 
- donation. For non-profit or free use, you may be the codebase under an 
+ donation and obtain written permission. 
+ 
+ For non-profit or free use, you may use the codebase under an 
  Apache 2.0 license. 
