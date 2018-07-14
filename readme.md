@@ -14,6 +14,9 @@ webserver running pointing everthing at `public/index.php` going
 forward. The live servers run on PHP 7.1, MariaDB 10.1 and 
 beanstalk 1.10.
 
+THe development environment includes a `docker-compose.yml` with 
+everything you need to get up and running.  
+
 Further instructions will be added soon and I'm happy to accept PRs
 for the main site to implement new functionality.
 
