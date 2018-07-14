@@ -75,7 +75,7 @@ class ScheduledPostCommand extends Command
 
                             if (count($artists->getItems()) > 0) {
                                 $this->info('[scheduled] User has updated from ' . $source->network_name . ': ' .
-                                    f$user->email);
+                                    $user->email);
 
                                 if ($connection->network_name == "twitter") {
                                     $update = new CreateTwitterUpdateFromLastFM($artists->getItems(), $user);
